@@ -14,6 +14,13 @@ from viberbot.api.viber_requests import ViberUnsubscribedRequest
 
 app = Flask(__name__)
 
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 bot_configuration = BotConfiguration(
     name='TestyMcBot',
     avatar='https://cdn1.iconfinder.com/data/icons/ninja-things-1/1772/ninja-simple-512.png',
@@ -32,7 +39,7 @@ def incoming():
 
     if isinstance(viber_request, ViberMessageRequest):
         message = viber_request.message + ', is what they all say...'
-        viber.send_message(viber_request.sender.id, [
+        viber.send_messages(viber_request.sender.id, [
             message
         ])
     elif isinstance(viber_request, ViberSubscribedRequest):
