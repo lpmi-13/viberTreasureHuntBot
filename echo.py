@@ -38,7 +38,7 @@ def incoming():
     viber_request = viber.parse_request(request.get_data())
 
     if isinstance(viber_request, ViberMessageRequest):
-        message = viber_request.message + ', is what they all say...'
+        message = viber_request.message
         viber.send_messages(viber_request.sender.id, [
             message
         ])
