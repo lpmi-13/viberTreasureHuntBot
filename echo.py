@@ -29,6 +29,30 @@ bot_configuration = BotConfiguration(
 
 viber = Api(bot_configuration)
 
+keyboardResponse = {
+    "keyboard": {
+        "Type": "keyboard",
+        "DefaultHeight": true,
+        "BgColor": "#FFFFFF",
+        "Buttons": [{
+            "Columns": 6,
+            "Rows": 1,
+            "BgColor": "#2db9b9",
+            "BgMediaType": "gif",
+            "BgMedia": "http://www.url.by/test.gif",
+            "BgLoop": true,
+            "ActionType": "open-url",
+            "ActionBody": "www.tut.by",
+            "Image": "www.tut.by/img.jpg",
+            "Text": "Press Me!",
+            "TextVAlign": "middle",
+            "TextHAlign": "center",
+            "TextOpacity": 60,
+            "TextSize": "regular"
+        }]
+    }
+ }
+
 @app.route('/', methods=['POST'])
 def incoming():
     logger.debug("received request. post data: {0}".format(request.get_data()))
@@ -38,7 +62,7 @@ def incoming():
     viber_request = viber.parse_request(request.get_data())
 
     if isinstance(viber_request, ViberMessageRequest):
-        message = viber_request.message
+        message = TextMessage(text='have a keyboard!', keyboardResponse) 
         viber.send_messages(viber_request.sender.id, [
             message
         ])
