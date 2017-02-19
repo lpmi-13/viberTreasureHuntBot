@@ -23,9 +23,9 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 bot_configuration = BotConfiguration(
-    name='HuntBot',
+    name='TestyMcBot',
     avatar='https://cdn1.iconfinder.com/data/icons/ninja-things-1/1772/ninja-simple-512.png',
-    auth_token=os.environ['VIBER_HUNT_TOKEN']
+    auth_token=os.environ['VIBER_TOKEN']
 )
 
 viber = Api(bot_configuration)
@@ -91,4 +91,4 @@ def incoming():
     return Response(status=200)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5005)
+    app.run(host='0.0.0.0',port=5005) 
