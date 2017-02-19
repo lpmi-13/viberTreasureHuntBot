@@ -23,9 +23,9 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 bot_configuration = BotConfiguration(
-    name='TestyMcBot',
+    name='HuntBot',
     avatar='https://cdn1.iconfinder.com/data/icons/ninja-things-1/1772/ninja-simple-512.png',
-    auth_token=os.environ['VIBER_TOKEN']
+    auth_token=os.environ['VIBER_HUNT_TOKEN']
 )
 
 viber = Api(bot_configuration)
@@ -40,8 +40,8 @@ keyboardResponse = {
         "BgColor": "#008383",
         "BgLoop": True,
         "ActionType": "reply",
-        "ActionBody": "clue",
-        "Text": "get a clue",
+        "ActionBody": "get first clue",
+        "Text": "get first clue",
         "TextVAlign": "middle",
         "TextHAlign": "center",
         "TextOpacity": 60,
@@ -52,8 +52,8 @@ keyboardResponse = {
         "BgColor": "#7EDFDF",
         "BgLoop" : True,
         "ActionType": "reply",
-        "ActionBody": "sentence",
-        "Text": "correct a sentence",
+        "ActionBody": "see some phrases",
+        "Text": "see some phrases",
         "TextVAlign": "middle",
         "TextHAlign": "center",
         "TextOpacity": 60,
@@ -61,25 +61,44 @@ keyboardResponse = {
     }]
  }
 
+clues = {
+    0:'firstclue.jpg',
+    1:'secondclue.jpg',
+    2:'thirdclue.jpg',
+    3:'fourthclue.jpg',
+    4:'fifthclue.jpg'
+}
+
+answers = ['carfax', 'pembroke', 'christ church', 'dunno', 'beef lane']
+
+
 @app.route('/', methods=['POST'])
 def incoming():
     logger.debug("received request. post data: {0}".format(request.get_data()))
+
+    clueNumber = -1
+
     if not viber.verify_signature(request.get_data(), request.headers.get('X-Viber-Content-Signature')):
         return Response(status=403)
 
     viber_request = viber.parse_request(request.get_data())
 
     if isinstance(viber_request, ViberMessageRequest):
-        if viber_request.message.text == 'clue':
-            message = PictureMessage(media="https://github.com/lpmi-13/viberbot/blob/grammarbuffet/assets/locations/IMG_20170128_162050.jpg",text="find this place!")
-        elif viber_request.message.text == 'sentence':
-            message = TextMessage(text='its helpful to correct sentences.')
-        else:
-            message = TextMessage(text='have a keyboard!', keyboard=keyboardResponse) 
+        if viber_request.message.text == 'get a clue':
+            sendClues(viber_request.sender.id)
 
-        viber.send_messages(viber_request.sender.id, [
-            message
-        ])
+        elif viber_request.message.text == answers[clueNumber]:
+            sendClues(viber_request.sender.id)
+
+        elif viber_request.message.text == 'see some phrases':
+            sendPhrases(viber_request.sender.id)
+
+        else:
+            message = TextMessage(text='would you like to start the treasure hunt, or see some phrases for asking directions?', keyboard=keyboardResponse) 
+
+            viber.send_messages(viber_request.sender.id, [
+                message
+            ])
 
     elif isinstance(viber_request, ViberSubscribedRequest):
         viber.send_messages(viber_request.get_user.id, [
@@ -90,5 +109,15 @@ def incoming():
 
     return Response(status=200)
 
+
+def sendClues(user_id):
+    clueNumber += 1
+    message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/%s"%(clues[clueNumber]),text="what's the name of this place?")
+    viber.send_messages(user_id, [message])
+
+def sendPhrases(user_id):
+    message = TextMessage(text='Do you know where this is? Can you help me find this place? How do you get to this place?')
+    viber.send_messages(user_id, [message])
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5005) 
+    app.run(host='0.0.0.0',port=5005)
