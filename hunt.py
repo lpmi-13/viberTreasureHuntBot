@@ -40,7 +40,7 @@ keyboardResponse = {
         "BgColor": "#008383",
         "BgLoop": True,
         "ActionType": "reply",
-        "ActionBody": "get first clue",
+        "ActionBody": "get a clue",
         "Text": "get first clue",
         "TextVAlign": "middle",
         "TextHAlign": "center",
