@@ -13,6 +13,8 @@ from viberbot.api.viber_requests import ViberMessageRequest
 from viberbot.api.viber_requests import ViberSubscribedRequest
 from viberbot.api.viber_requests import ViberUnsubscribedRequest
 
+from db import getClueNumber
+
 app = Flask(__name__)
 
 logger = logging.getLogger()
@@ -62,11 +64,11 @@ keyboardResponse = {
  }
 
 clues = {
-    0:'firstclue.jpg',
-    1:'secondclue.jpg',
-    2:'thirdclue.jpg',
-    3:'fourthclue.jpg',
-    4:'fifthclue.jpg'
+    1:'firstclue.jpg',
+    2:'secondclue.jpg',
+    3:'thirdclue.jpg',
+    4:'fourthclue.jpg',
+    5:'fifthclue.jpg'
 }
 
 answers = ['carfax', 'pembroke', 'christ church', 'dunno', 'beef lane']
@@ -76,8 +78,6 @@ answers = ['carfax', 'pembroke', 'christ church', 'dunno', 'beef lane']
 def incoming():
     logger.debug("received request. post data: {0}".format(request.get_data()))
 
-    clueNumber = -1
-
     if not viber.verify_signature(request.get_data(), request.headers.get('X-Viber-Content-Signature')):
         return Response(status=403)
 
@@ -85,10 +85,12 @@ def incoming():
 
     if isinstance(viber_request, ViberMessageRequest):
         if viber_request.message.text == 'get a clue':
-            sendClues(viber_request.sender.id)
+            clueNumber = getClueNumber(viber_request.sender.id)
+            sendClues(viber_request.sender.id, clueNumber)
 
         elif viber_request.message.text == answers[clueNumber]:
-            sendClues(viber_request.sender.id)
+            clueNumber = getClueNumber(viber_request.sender.id)
+            sendClues(viber_request.sender.id, clueNumber)
 
         elif viber_request.message.text == 'see some phrases':
             sendPhrases(viber_request.sender.id)
@@ -110,8 +112,7 @@ def incoming():
     return Response(status=200)
 
 
-def sendClues(user_id):
-    clueNumber += 1
+def sendClues(user_id, clueNumber):
     message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/%s"%(clues[clueNumber]),text="what's the name of this place?")
     viber.send_messages(user_id, [message])
 

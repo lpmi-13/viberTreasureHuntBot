@@ -1,32 +1,26 @@
 from pymongo import MongoClient
 
-db = MongoClient().users
+def getClueNumber(id_number):
+    db = MongoClient().users
 
-id_number = 4373737373
+    check = db.users.find({"user_id": id_number})
 
-#print "inserted [{}].".format(result.inserted_id)
+    if check.count():
+        for item in check:
+            if (item['clue'] < 5):
+                db.users.replace_one(
+                    {"user_id" : id_number},
+                    {"user_id" : id_number, "clue": (item['clue'] + 1), "app": "viberhuntbot"}
+                )
+                return (item['clue'] + 1)
+            else:
+                db.users.delete_one({"user_id": id_number})
+                return 0
+    else:
+        result = db.users.insert_one({
+            "user_id": id_number,
+            "clue": 1,
+            "app": "viberhuntbot"
+        })
 
-
-
-check = db.users.find({"user_id": id_number})
-
-if check.count():
-    for item in check:
-        if (item['clue'] < 5):
-            db.users.replace_one(
-                {"user_id" : id_number},
-                {"user_id" : id_number, "clue": (item['clue'] + 1), "app": "viberhuntbot"}
-            )
-            print 'updated clues for user %s to %s'%(id_number,(item['clue'] + 1))
-            print (item['clue'] + 1)
-        else:
-            db.users.delete_one({"user_id": id_number})
-            print 'finished'
-else:
-    result = db.users.insert_one({
-        "user_id": id_number,
-        "clue": 1,
-        "app": "viberhuntbot"
-    })
-
-    print 'inserted %s into the DB'%(result.inserted_id)
+    return 1
