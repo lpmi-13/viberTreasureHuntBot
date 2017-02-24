@@ -84,12 +84,14 @@ def incoming():
     viber_request = viber.parse_request(request.get_data())
 
     if isinstance(viber_request, ViberMessageRequest):
+        currentClueNumber = getCurrentClueNumber(viber_request.sender.id)
+
         if viber_request.message.text == 'get a clue':
-            clueNumber = getClueNumber(viber_request.sender.id)
+            clueNumber = getNextClueNumber(viber_request.sender.id)
             sendClues(viber_request.sender.id, clueNumber)
 
-        elif viber_request.message.text == answers[clueNumber]:
-            clueNumber = getClueNumber(viber_request.sender.id)
+        elif viber_request.message.text == answers[currentClueNumber]:
+            clueNumber = getNextClueNumber(viber_request.sender.id)
             sendClues(viber_request.sender.id, clueNumber)
 
         elif viber_request.message.text == 'see some phrases':
