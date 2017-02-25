@@ -21,7 +21,7 @@ def getCurrentClueNumber(id_number):
             return item['clue']
 
     else:
-        return None
+        return 1
 
 
 def getNextClueNumber(id_number):
