@@ -85,25 +85,41 @@ def incoming():
     viber_request = viber.parse_request(request.get_data())
 
     if isinstance(viber_request, ViberMessageRequest):
-        currentClueNumber = getCurrentClueNumber(viber_request.sender.id)
+        user_id = viber.request.sender.id
 
-        if viber_request.message.text == 'get a clue':
-            clueNumber = getNextClueNumber(viber_request.sender.id)
-            sendClues(viber_request.sender.id, clueNumber)
+        userStartedHunt = checkUserStatus(user_id)
 
-        elif viber_request.message.text == answers[currentClueNumber]:
-            clueNumber = getNextClueNumber(viber_request.sender.id)
-            sendClues(viber_request.sender.id, clueNumber)
+        if userStartedHunt:
 
-        elif viber_request.message.text == 'see some phrases':
-            sendPhrases(viber_request.sender.id)
+            currentClueNumber = getCurrentClueNumber(user_id)
+
+            if viber_request.message.text == 'get a clue':
+#                clueNumber = getNextClueNumber(viber_request.sender.id)
+                sendClues(user_id, currentClueNumber)
+
+            elif viber_request.message.text == answers[currentClueNumber]:
+                clueNumber = getNextClueNumber(user_id)
+                sendClues(user_id, clueNumber)
+
+#            elif viber_request.message.text == 'see some phrases':
+#                sendPhrases(viber_request.sender.id)
+
+            else:
+                 message = TextMessage(text='sorry, try again. Type "get a clue" to see the clue again')
+                 viber.send_messages(user_id, [
+                     message
+                 ])
 
         else:
-            message = TextMessage(text='would you like to start the treasure hunt, or see some phrases for asking directions?', keyboard=keyboardResponse) 
+            if viber_request.message.text == 'get a clue':
+                clueNumber = getNextClueNumber(user_id)
+                sendClues(user_id, clueNumber)
+            else:
+                message = TextMessage(text='would you like to start the treasure hunt, or see some phrases for asking directions?', keyboard=keyboardResponse) 
 
-            viber.send_messages(viber_request.sender.id, [
-                message
-            ])
+                viber.send_messages(user_id, [
+                    message
+                ])
 
     elif isinstance(viber_request, ViberSubscribedRequest):
         viber.send_messages(viber_request.get_user.id, [
