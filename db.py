@@ -1,5 +1,16 @@
 from pymongo import MongoClient
 
+def checkUserStatus(user_id):
+    db = MongoClient().users
+
+    check = db.users.find({"user_id": user_id})
+
+    if check.count():
+        return True
+
+    else:
+        return False
+
 def getCurrentClueNumber(id_number):
     db = MongoClient().users
 

@@ -15,6 +15,7 @@ from viberbot.api.viber_requests import ViberUnsubscribedRequest
 
 from db import getCurrentClueNumber
 from db import getNextClueNumber
+from db import checkUserStatus
 
 app = Flask(__name__)
 
@@ -72,7 +73,13 @@ clues = {
     5:'fifthclue.jpg'
 }
 
-answers = ['carfax', 'pembroke', 'christ church', 'dunno', 'beef lane']
+answers = {
+    1:'carfax',
+    2:'pembroke',
+    3:'christ church',
+    4:'dunno',
+    5:'beef lane'
+}
 
 
 @app.route('/', methods=['POST'])
