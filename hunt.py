@@ -63,24 +63,7 @@ keyboardResponse = {
         "TextOpacity": 60,
         "TextSize": "regular"
     }]
- }
-
-clues = {
-    1:'firstclue.jpg',
-    2:'secondclue.jpg',
-    3:'thirdclue.jpg',
-    4:'fourthclue.jpg',
-    5:'fifthclue.jpg'
-}
-
-answers = {
-    1:'carfax',
-    2:'pembroke',
-    3:'christ church',
-    4:'dunno',
-    5:'beef lane'
-}
-
+ } 
 
 @app.route('/', methods=['POST'])
 def incoming():
@@ -92,22 +75,30 @@ def incoming():
     viber_request = viber.parse_request(request.get_data())
 
     if isinstance(viber_request, ViberMessageRequest):
-        user_id = viber.request.sender.id
+        user_id = viber_request.sender.id
 
         userStartedHunt = checkUserStatus(user_id)
 
         if userStartedHunt:
 
             currentClueNumber = getCurrentClueNumber(user_id)
-
-            if viber_request.message.text == 'get a clue':
+#            sendDebugMessage(user_id,currentClueNumber)
+            if viber_request.message.text.lower() == 'get a clue':
 #                clueNumber = getNextClueNumber(viber_request.sender.id)
+#                sendDebugMessage(user_id,currentClueNumber)
                 sendClues(user_id, currentClueNumber)
+#                sendDebugMessage(user_id,currentClueNumber)
 
-            elif viber_request.message.text == answers[currentClueNumber]:
+            elif viber_request.message.text.lower() == checkAnswer(currentClueNumber):
                 clueNumber = getNextClueNumber(user_id)
-                sendClues(user_id, clueNumber)
-
+ #               sendDebugMessage(user_id,clueNumber)
+                if clueNumber == 0:
+                    message = TextMessage(text='hurray!, you finished.')
+                    viber.send_messages(user_id, [
+                        message
+                    ])
+                else:
+                    sendClues(user_id, clueNumber) 
 #            elif viber_request.message.text == 'see some phrases':
 #                sendPhrases(viber_request.sender.id)
 
@@ -121,6 +112,7 @@ def incoming():
             if viber_request.message.text == 'get a clue':
                 clueNumber = getNextClueNumber(user_id)
                 sendClues(user_id, clueNumber)
+#                sendDebugMessage(user_id, clueNumber)
             else:
                 message = TextMessage(text='would you like to start the treasure hunt, or see some phrases for asking directions?', keyboard=keyboardResponse) 
 
@@ -137,8 +129,29 @@ def incoming():
 
     return Response(status=200)
 
+def sendDebugMessage(user_id, clueNumber):
+    message = TextMessage(text="the current clue number is %s"%(clueNumber))
+    viber.send_messages(user_id, [message])
+
+def checkAnswer(clue):
+    answers = {
+        1:'carfax',
+        2:'pembroke',
+        3:'christ church',
+        4:'dunno',
+        5:'beef lane'
+    }  
+    return answers[clue]
 
 def sendClues(user_id, clueNumber):
+    clues =  {
+        1:'firstclue.jpg',
+        2:'secondclue.jpg',
+        3:'thirdclue.jpg',
+        4:'fourthclue.jpg',
+        5:'fifthclue.jpg'
+    }
+
     message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/%s"%(clues[clueNumber]),text="what's the name of this place?")
     viber.send_messages(user_id, [message])
 

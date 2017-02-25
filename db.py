@@ -14,7 +14,7 @@ def checkUserStatus(user_id):
 def getCurrentClueNumber(id_number):
     db = MongoClient().users
 
-    check = db.user.find({"user_id": id_number})
+    check = db.users.find({"user_id": id_number})
 
     if check.count():
         for item in check:
