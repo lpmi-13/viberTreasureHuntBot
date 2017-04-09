@@ -83,30 +83,38 @@ def incoming():
 
             currentClueNumber = getCurrentClueNumber(user_id)
 #            sendDebugMessage(user_id,currentClueNumber)
-            if viber_request.message.text.lower() == 'get a clue':
-#                clueNumber = getNextClueNumber(viber_request.sender.id)
-#                sendDebugMessage(user_id,currentClueNumber)
-                sendClues(user_id, currentClueNumber)
-#                sendDebugMessage(user_id,currentClueNumber)
+            if viber_request.message.type == 'text':
 
-            elif viber_request.message.text.lower() == checkAnswer(currentClueNumber):
-                clueNumber = getNextClueNumber(user_id)
- #               sendDebugMessage(user_id,clueNumber)
-                if clueNumber == 0:
-                    message = TextMessage(text='hurray!, you finished.')
+                if viber_request.message.text.lower() == 'get a clue':
+#                    clueNumber = getNextClueNumber(viber_request.sender.id)
+#                    sendDebugMessage(user_id,currentClueNumber)
+                    sendClues(user_id, currentClueNumber)
+#                    sendDebugMessage(user_id,currentClueNumber)
+
+                elif viber_request.message.text.lower() == checkAnswer(currentClueNumber):
+                    clueNumber = getNextClueNumber(user_id)
+ #                   sendDebugMessage(user_id,clueNumber)
+                    if clueNumber == 0:
+                        message = TextMessage(text='hurray!, you finished.')
+                        viber.send_messages(user_id, [
+                            message
+                        ])
+                    else:
+                        sendClues(user_id, clueNumber) 
+#                elif viber_request.message.text == 'see some phrases':
+#                    sendPhrases(viber_request.sender.id)
+
+                else:
+                    message = TextMessage(text='sorry, try again. Type "get a clue" to see the clue again')
                     viber.send_messages(user_id, [
                         message
                     ])
-                else:
-                    sendClues(user_id, clueNumber) 
-#            elif viber_request.message.text == 'see some phrases':
-#                sendPhrases(viber_request.sender.id)
 
             else:
-                 message = TextMessage(text='sorry, try again. Type "get a clue" to see the clue again')
-                 viber.send_messages(user_id, [
-                     message
-                 ])
+                message_data = viber.request.message
+                viber.send_messages(viber_request.sender.id, [
+                    message_data
+                ])
 
         else:
             if viber_request.message.text == 'get a clue':
