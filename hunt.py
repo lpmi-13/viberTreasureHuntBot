@@ -83,7 +83,7 @@ def incoming():
 
             currentClueNumber = getCurrentClueNumber(user_id)
 #            sendDebugMessage(user_id,currentClueNumber)
-            if viber_request.message.text:
+            if viber_request.message._message_type == 'text':
 
                 if viber_request.message.text.lower() == 'get a clue':
 #                    clueNumber = getNextClueNumber(viber_request.sender.id)
@@ -111,9 +111,11 @@ def incoming():
                     ])
 
             else:
-                message_data = viber.request.message
+                longitude = viber_request.message.location.longitude
+                latitude = viber_request.message.location.latitude
+                message = TextMessage(text='received %s longitude and %s latitude' % (longitude, latitude))
                 viber.send_messages(viber_request.sender.id, [
-                    message_data
+                    message
                 ])
 
         else:
