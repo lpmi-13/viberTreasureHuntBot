@@ -83,7 +83,7 @@ def incoming():
 
             currentClueNumber = getCurrentClueNumber(user_id)
 #            sendDebugMessage(user_id,currentClueNumber)
-            if viber_request.message.type == 'text':
+            if viber_request.message.text:
 
                 if viber_request.message.text.lower() == 'get a clue':
 #                    clueNumber = getNextClueNumber(viber_request.sender.id)
