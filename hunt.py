@@ -194,7 +194,7 @@ def sendClues(user_id, clueNumber):
         5:'fifthclue-beta.jpg'
     }
 
-    message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/%s"%(clues[clueNumber]),text="what's the name of this place?")
+    message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/%s"%(clues[clueNumber]),text="Find this place and send your location.")
     viber.send_messages(user_id, [message])
 
 def sendPhrases(user_id):
