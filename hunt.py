@@ -126,6 +126,11 @@ def incoming():
                     else:
                         sendClues(user_id, clueNumber) 
 
+                else:
+                    message = TextMessage(text='sorry, you haven\'t found it yet. Ask somebody else and try to find the place. Then send your location.')
+                    viber.send_messages(user_id, [
+                        message
+                    ])
         else:
             if viber_request.message.text == 'get a clue':
                 clueNumber = getNextClueNumber(user_id)
