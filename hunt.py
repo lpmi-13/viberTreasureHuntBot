@@ -110,12 +110,7 @@ def incoming():
                 currentClueNumber = getCurrentClueNumber(user_id)
                 correctCoordinates = checkLocation(currentClueNumber)
 
-                if (abs(longitude - correctCoordinates.lon) < .001) and (abs(latitude - correctCoordinates.lat) < .001):
-
-                    message = TextMessage(text='You found the place! Here\'s your next clue...')
-                    viber.send_messages(user_id, [
-                        message
-                    ])
+                if (abs(longitude - correctCoordinates['lon']) < .001) and (abs(latitude - correctCoordinates['lat']) < .001):
 
                     clueNumber = getNextClueNumber(user_id)
                     if clueNumber == 0:
@@ -124,6 +119,10 @@ def incoming():
                             message
                         ])
                     else:
+                        message = TextMessage(text='You found the place! Here\'s your next clue...')
+                        viber.send_messages(user_id, [
+                            message
+                        ])
                         sendClues(user_id, clueNumber) 
 
                 else:
