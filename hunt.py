@@ -90,7 +90,7 @@ def incoming():
                 elif viber_request.message.text.lower() == checkAnswer(currentClueNumber):
                     clueNumber = getNextClueNumber(user_id)
                     if clueNumber == 0:
-                        message = TextMessage(text='hurray!, you finished.')
+                        message = TextMessage(text='Hurray! You finished.')
                         viber.send_messages(user_id, [
                             message
                         ])
@@ -138,24 +138,24 @@ def sendDebugMessage(user_id, clueNumber):
 def checkLocations(clue):
     answers = {
         1: {
-            'lon':'',
-            'lat':''
+            'lon':'-1.259794',
+            'lat':'51.751595'
         },
         2: {
-           'lon':'',
-           'lat':''
+           'lon':'-1.261547',
+           'lat':'51.752013'
         },
         3: {
-            'lon':'',
-            'lat':''
+            'lon':'-1.261657',
+            'lat':'51.754027'
         },
         4: {
-            'lon':'',
-            'lat':''
+            'lon':'-1.262711',
+            'lat':'51.752446'
         },
         5: {
-           'lon':'',
-           'lat':''
+           'lon':'-1.256197',
+           'lat':'51.753333'
         }
     }
     return answers[clue]
