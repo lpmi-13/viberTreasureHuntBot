@@ -98,7 +98,7 @@ def incoming():
                         sendClues(user_id, clueNumber) 
 
                 else:
-                    message = TextMessage(text='sorry, try again. Type "get a clue" to see the clue again')
+                    message = TextMessage(text='sorry, if you think you\'re at the right place, try sending your location again. Type "get a clue" to see the clue again')
                     viber.send_messages(user_id, [
                         message
                     ])
@@ -106,10 +106,25 @@ def incoming():
             else:
                 longitude = viber_request.message.location.longitude
                 latitude = viber_request.message.location.latitude
-                message = TextMessage(text='received %s longitude and %s latitude' % (longitude, latitude))
-                viber.send_messages(viber_request.sender.id, [
-                    message
-                ])
+
+                currentClueNumber = getCurrentClueNumber(user_id)
+                correctCoordinates = checkLocation(currentClueNumber)
+
+                if (abs(longitude - correctCoordinates.lon) < .001) and (abs(latitude - correctCoordinates.lat) < .001):
+
+                    message = TextMessage(text='You found the place! Here\'s your next clue...')
+                    viber.send_messages(user_id, [
+                        message
+                    ])
+
+                    clueNumber = getNextClueNumber(user_id)
+                    if clueNumber == 0:
+                        message = TextMessage(text='Hurray! You finished.')
+                        viber.send_messages(user_id, [
+                            message
+                        ])
+                    else:
+                        sendClues(user_id, clueNumber) 
 
         else:
             if viber_request.message.text == 'get a clue':
@@ -138,24 +153,24 @@ def sendDebugMessage(user_id, clueNumber):
 def checkLocations(clue):
     answers = {
         1: {
-            'lon':'-1.259794',
-            'lat':'51.751595'
+            'lon': -1.259794,
+            'lat': 51.751595
         },
         2: {
-           'lon':'-1.261547',
-           'lat':'51.752013'
+           'lon': -1.261547,
+           'lat': 51.752013
         },
         3: {
-            'lon':'-1.261657',
-            'lat':'51.754027'
+            'lon': -1.261657,
+            'lat': 51.754027
         },
         4: {
-            'lon':'-1.262711',
-            'lat':'51.752446'
+            'lon': -1.262711,
+            'lat': 51.752446
         },
         5: {
-           'lon':'-1.256197',
-           'lat':'51.753333'
+           'lon': -1.256197,
+           'lat': 51.753333
         }
     }
     return answers[clue]
