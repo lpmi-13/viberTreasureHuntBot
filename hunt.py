@@ -155,7 +155,7 @@ def sendDebugMessage(user_id, clueNumber):
     message = TextMessage(text="the current clue number is %s"%(clueNumber))
     viber.send_messages(user_id, [message])
 
-def checkLocations(clue):
+def checkLocation(clue):
     answers = {
         1: {
             'lon': -1.259794,
