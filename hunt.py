@@ -172,11 +172,11 @@ def checkAnswer(clue):
 
 def sendClues(user_id, clueNumber):
     clues =  {
-        1:'firstclue.jpg',
-        2:'secondclue.jpg',
-        3:'thirdclue.jpg',
-        4:'fourthclue.jpg',
-        5:'fifthclue.jpg'
+        1:'firstclue-beta.jpg',
+        2:'secondclue-beta.jpg',
+        3:'thirdclue-beta.jpg',
+        4:'fourthclue-beta.jpg',
+        5:'fifthclue-beta.jpg'
     }
 
     message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/%s"%(clues[clueNumber]),text="what's the name of this place?")
