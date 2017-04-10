@@ -82,18 +82,13 @@ def incoming():
         if userStartedHunt:
 
             currentClueNumber = getCurrentClueNumber(user_id)
-#            sendDebugMessage(user_id,currentClueNumber)
             if viber_request.message._message_type == 'text':
 
                 if viber_request.message.text.lower() == 'get a clue':
-#                    clueNumber = getNextClueNumber(viber_request.sender.id)
-#                    sendDebugMessage(user_id,currentClueNumber)
                     sendClues(user_id, currentClueNumber)
-#                    sendDebugMessage(user_id,currentClueNumber)
 
                 elif viber_request.message.text.lower() == checkAnswer(currentClueNumber):
                     clueNumber = getNextClueNumber(user_id)
- #                   sendDebugMessage(user_id,clueNumber)
                     if clueNumber == 0:
                         message = TextMessage(text='hurray!, you finished.')
                         viber.send_messages(user_id, [
@@ -101,8 +96,6 @@ def incoming():
                         ])
                     else:
                         sendClues(user_id, clueNumber) 
-#                elif viber_request.message.text == 'see some phrases':
-#                    sendPhrases(viber_request.sender.id)
 
                 else:
                     message = TextMessage(text='sorry, try again. Type "get a clue" to see the clue again')
@@ -122,7 +115,6 @@ def incoming():
             if viber_request.message.text == 'get a clue':
                 clueNumber = getNextClueNumber(user_id)
                 sendClues(user_id, clueNumber)
-#                sendDebugMessage(user_id, clueNumber)
             else:
                 message = TextMessage(text='would you like to start the treasure hunt, or see some phrases for asking directions?', keyboard=keyboardResponse) 
 
@@ -143,6 +135,31 @@ def sendDebugMessage(user_id, clueNumber):
     message = TextMessage(text="the current clue number is %s"%(clueNumber))
     viber.send_messages(user_id, [message])
 
+def checkLocations(clue):
+    answers = {
+        1: {
+            'lon':'',
+            'lat':''
+        },
+        2: {
+           'lon':'',
+           'lat':''
+        },
+        3: {
+            'lon':'',
+            'lat':''
+        },
+        4: {
+            'lon':'',
+            'lat':''
+        },
+        5: {
+           'lon':'',
+           'lat':''
+        }
+    }
+    return answers[clue]
+
 def checkAnswer(clue):
     answers = {
         1:'carfax',
@@ -150,7 +167,7 @@ def checkAnswer(clue):
         3:'christ church',
         4:'dunno',
         5:'beef lane'
-    }  
+    }
     return answers[clue]
 
 def sendClues(user_id, clueNumber):
