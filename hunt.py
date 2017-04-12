@@ -4,7 +4,7 @@ from flask import Flask, request, Response
 from viberbot import Api
 from viberbot.api.bot_configuration import BotConfiguration
 from viberbot.api.messages.text_message import TextMessage
-from viberbot.api.messages import PictureMessage
+from viberbot.api.messages import PictureMessage, StickerMessage
 import logging
 
 from viberbot.api.viber_requests import ViberConversationStartedRequest
@@ -93,6 +93,10 @@ def incoming():
                         message = TextMessage(text='Hurray! You finished.')
                         viber.send_messages(user_id, [
                             message
+                        ])
+                        sticker = StickerMessage(sticker_id=40127)
+                        viber.send_messages(user_id, [
+                            sticker
                         ])
                     else:
                         sendClues(user_id, clueNumber) 
