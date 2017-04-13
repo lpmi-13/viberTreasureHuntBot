@@ -91,12 +91,9 @@ def incoming():
                     clueNumber = getNextClueNumber(user_id)
                     if clueNumber == 0:
                         message = TextMessage(text='Hurray! You finished.')
-                        viber.send_messages(user_id, [
-                            message
-                        ])
                         sticker = StickerMessage(sticker_id=40127)
                         viber.send_messages(user_id, [
-                            sticker
+                            message, sticker
                         ])
                     else:
                         sendClues(user_id, clueNumber) 
