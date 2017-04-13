@@ -90,10 +90,9 @@ def incoming():
                 elif viber_request.message.text.lower() == checkAnswer(currentClueNumber):
                     clueNumber = getNextClueNumber(user_id)
                     if clueNumber == 0:
-                        message = TextMessage(text='Hurray! You finished.')
-                        sticker = StickerMessage(sticker_id=40127)
+                        message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/congrats.jpg",text="Hurray! You finished!")
                         viber.send_messages(user_id, [
-                            message, sticker
+                            message
                         ])
                     else:
                         sendClues(user_id, clueNumber) 
