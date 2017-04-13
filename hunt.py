@@ -115,7 +115,7 @@ def incoming():
 
                     clueNumber = getNextClueNumber(user_id)
                     if clueNumber == 0:
-                        message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/congrats.png",text="Hurray! You finished!")
+                        message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/congrats.jpg",text="Hurray! You finished!")
                         viber.send_message(user_id, [
                             message
                         ])
