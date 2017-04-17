@@ -7,11 +7,9 @@ from viberbot.api.messages.text_message import TextMessage
 from viberbot.api.messages import PictureMessage
 import logging
 
-from viberbot.api.viber_requests import ViberConversationStartedRequest
 from viberbot.api.viber_requests import ViberFailedRequest
 from viberbot.api.viber_requests import ViberMessageRequest
 from viberbot.api.viber_requests import ViberSubscribedRequest
-from viberbot.api.viber_requests import ViberUnsubscribedRequest
 
 from db import getCurrentClueNumber
 from db import getNextClueNumber
@@ -34,7 +32,7 @@ bot_configuration = BotConfiguration(
 
 viber = Api(bot_configuration)
 
-keyboardResponse = {
+initialKeyboardResponse = {
     "Type": "keyboard",
     "DefaultHeight": True,
     "BgColor": "#FFFFFF",
@@ -63,7 +61,50 @@ keyboardResponse = {
         "TextOpacity": 60,
         "TextSize": "regular"
     }]
- } 
+ }
+
+keyboardResponse = {
+    "Type": "keyboard",
+    "DefaultHeight": True,
+    "BgColor": "#FFFFFF",
+    "Buttons": [{
+        "Columns": 1,
+        "Rows": 3,
+        "BgColor": "#008383",
+        "BgLoop": False,
+        "ActionType": "reply",
+        "ActionBody": "get a clue",
+        "Text": "get first clue",
+        "TextVAlign": "middle",
+        "TextHAlign": "center",
+        "TextOpacity": 60,
+        "TextSize": "regular"
+    }, {
+        "Columns": 1,
+        "Rows": 3,
+        "BgColor": "#7EDFDF",
+        "BgLoop" : False,
+        "ActionType": "reply",
+        "ActionBody": "see some phrases",
+        "Text": "see some phrases",
+        "TextVAlign": "middle",
+        "TextHAlign": "center",
+        "TextOpacity": 60,
+        "TextSize": "regular"
+    }, {
+       "Columns": 1,
+       "Rows": 3,
+       "BgColor": "#000fff",
+       "BgLoop": False,
+       "ActionType": "reply",
+       "ActionBody": "send location",
+       "Text": "how do I send location?",
+       "TextVAlign": "middle",
+       "TextHAlign": "center",
+       "TextOpacity": 60,
+       "TextSize": "reqular"
+    }]
+ }
 
 @app.route('/', methods=['POST'])
 def incoming():
@@ -85,25 +126,34 @@ def incoming():
             if viber_request.message._message_type == 'text':
 
                 if viber_request.message.text.lower() == 'get a clue':
-                    sendClues(user_id, currentClueNumber)
+                    sendClues(user_id, currentClueNumber,keyboardResponse)
 
-                elif viber_request.message.text.lower() == checkAnswer(currentClueNumber):
-                    clueNumber = getNextClueNumber(user_id)
-                    if clueNumber == 0:
-                        message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/congrats.jpg",text="Hurray! You finished!")
-                        viber.send_messages(user_id, [
-                            message
-                        ])
-                    else:
-                        sendClues(user_id, clueNumber) 
+                elif viber_request.message.text.lower() == 'see some phrases':
+                    sendPhrases(user_id, keyboardResponse)
+
+                elif viber_request.message.text.lower() == 'send location':
+                    message = TextMessage(text='tap below and select "send location" from the menu', keyboard=keyboardResponse)
+                    viber.send_messages(user_id, [
+                        message
+                    ]
+
+#                elif viber_request.message.text.lower() == checkAnswer(currentClueNumber):
+#                    clueNumber = getNextClueNumber(user_id)
+#                    if clueNumber == 0:
+#                        message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/congrats.jpg",text="Hurray! You finished!")
+#                        viber.send_messages(user_id, [
+#                            message
+#                        ])
+#                    else:
+#                        sendClues(user_id, clueNumber) 
 
                 else:
-                    message = TextMessage(text='sorry, if you think you\'re at the right place, try sending your location again. Type "get a clue" to see the clue again')
+                    message = TextMessage(text='sorry, if you think you\'re at the right place, try sending your location again. Press "get a clue" to see the clue again', keyboard=keyboardResponse)
                     viber.send_messages(user_id, [
                         message
                     ])
 
-            else:
+            elif viber_request.message._message_type == 'location':
                 longitude = viber_request.message.location.longitude
                 latitude = viber_request.message.location.latitude
 
@@ -114,7 +164,7 @@ def incoming():
 
                     clueNumber = getNextClueNumber(user_id)
                     if clueNumber == 0:
-                        message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/congrats.jpg",text="Hurray! You finished!")
+                        message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/congrats.jpg",text="Hurray! You finished!", keyboard=initialKeyboardResponse)
                         viber.send_message(user_id, [
                             message
                         ])
@@ -123,19 +173,23 @@ def incoming():
                         viber.send_messages(user_id, [
                             message
                         ])
-                        sendClues(user_id, clueNumber) 
+                        sendClues(user_id, clueNumber, keyboardResponse)
 
                 else:
-                    message = TextMessage(text='sorry, you haven\'t found it yet. Ask somebody else and try to find the place. Then send your location.')
+                    message = TextMessage(text='sorry, you haven\'t found it yet. Ask somebody else and try to find the correct place. Then send your location.', keyboard=keyboardResponse)
                     viber.send_messages(user_id, [
                         message
                     ])
         else:
-            if viber_request.message.text == 'get a clue':
+            if viber_request.message.text.lower() == 'get a clue':
                 clueNumber = getNextClueNumber(user_id)
-                sendClues(user_id, clueNumber)
+                sendClues(user_id, clueNumber,initialKeyboardResponse)
+
+            elif viber_request.message.text.lower() == 'see some phrases'
+                sendPhrases(user_id,initialKeyboardResponse)
+
             else:
-                message = TextMessage(text='would you like to start the treasure hunt, or see some phrases for asking directions?', keyboard=keyboardResponse) 
+                message = TextMessage(text='would you like to start the treasure hunt, or see some phrases for asking directions?', keyboard=initialKeyboardResponse) 
 
                 viber.send_messages(user_id, [
                     message
@@ -143,16 +197,13 @@ def incoming():
 
     elif isinstance(viber_request, ViberSubscribedRequest):
         viber.send_messages(viber_request.get_user.id, [
-            TextMessage(text='you are now subscribed to the madness!')
+            TextMessage(text='you are now subscribed to the treasure hunt!')
         ])
     elif isinstance(viber_request, ViberFailedRequest):
         logger.warn('client failed receiving message. failure: {0}'.format(viber_request))
 
     return Response(status=200)
 
-def sendDebugMessage(user_id, clueNumber):
-    message = TextMessage(text="the current clue number is %s"%(clueNumber))
-    viber.send_messages(user_id, [message])
 
 def checkLocation(clue):
     answers = {
@@ -189,7 +240,7 @@ def checkAnswer(clue):
     }
     return answers[clue]
 
-def sendClues(user_id, clueNumber):
+def sendClues(user_id, clueNumber, keyboard):
     clues =  {
         1:'firstclue-beta.jpg',
         2:'secondclue-beta.jpg',
@@ -198,11 +249,11 @@ def sendClues(user_id, clueNumber):
         5:'fifthclue-beta.jpg'
     }
 
-    message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/%s"%(clues[clueNumber]),text="Find this place and send your location.")
+    message = PictureMessage(media="https://grammarbuffet.org/static/viberhuntbot/assets/%s"%(clues[clueNumber]),text="Find this place and send your location.", keyboard=keyboard )
     viber.send_messages(user_id, [message])
 
-def sendPhrases(user_id):
-    message = TextMessage(text='Do you know where this is? Can you help me find this place? How do you get to this place?')
+def sendPhrases(user_id, keyboard):
+    message = TextMessage(text='TO GET ATTENTION:\n\n- Excuse me...\n- Sorry...\n- Ummm...\n\nTO ASK FOR DIRECTIONS:\n\n- Do you know where this is?\n- Can you help me find this place?\n- How do you get to this place?\n\nTO THANK FOR HELP:\n\n- Thanks very much\n- Thanks for your help\n- Thank you\n- Thanks\n\nIF THEY DON\'T KNOW:\n\n- No worries\n- That\'s alright\n- That\'s okay', keyboard=keyboard)
     viber.send_messages(user_id, [message])
 
 if __name__ == '__main__':
