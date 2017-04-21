@@ -236,7 +236,6 @@ def incoming():
                 viber.send_messages(user_id, [
                    message
                 ])
-                
 
     elif isinstance(viber_request, ViberSubscribedRequest):
         viber.send_messages(viber_request.get_user.id, [
