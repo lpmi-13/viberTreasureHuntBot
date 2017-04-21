@@ -15,6 +15,7 @@ from db import getCurrentClueNumber
 from db import getNextClueNumber
 from db import checkUserStatus
 
+
 app = Flask(__name__)
 
 logger = logging.getLogger()
@@ -118,6 +119,10 @@ finalKeyboardResponse = {
         "ActionBody": "get a clue",
         "Text": "play again",
         "Silent": True,
+        "BgLoop": True,
+        "ActionType": "reply",
+        "ActionBody": "get first clue",
+        "Text": "get first clue,
         "TextVAlign": "middle",
         "TextHAlign": "center",
         "TextOpacity": 60,
@@ -136,6 +141,7 @@ finalKeyboardResponse = {
         "TextSize": "regular"
     }]
  }
+
 
 @app.route('/', methods=['POST'])
 def incoming():
@@ -300,3 +306,4 @@ def sendPhrases(user_id, keyboard):
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', port = 5005)
+
