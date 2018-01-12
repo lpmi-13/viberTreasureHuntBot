@@ -26,7 +26,7 @@ logger.addHandler(handler)
 
 bot_configuration = BotConfiguration(
     name='HuntBot',
-    avatar='https://cdn1.iconfinder.com/data/icons/ninja-things-1/1772/ninja-simple-512.png',
+    avatar='/static/viberhuntbot/assets/ninja-simple-512.png'
     auth_token=os.environ['VIBER_HUNT_TOKEN']
 )
 
@@ -148,6 +148,7 @@ def incoming():
 
     if isinstance(viber_request, ViberMessageRequest):
         user_id = viber_request.sender.id
+        logger.debug("received interaction from user id: {}".format(user_id))       
 
         userStartedHunt = checkUserStatus(user_id)
 
@@ -238,6 +239,7 @@ def incoming():
                 ])
 
     elif isinstance(viber_request, ViberSubscribedRequest):
+        logger.debug("received subscribed request from user id: {}".format(viber_request.get_user.id))
         viber.send_messages(viber_request.get_user.id, [
             TextMessage(text = 'you are now subscribed to the treasure hunt!')
         ])
