@@ -15,7 +15,6 @@ from db import getCurrentClueNumber
 from db import getNextClueNumber
 from db import checkUserStatus
 
-
 app = Flask(__name__)
 
 logger = logging.getLogger()
@@ -27,7 +26,7 @@ logger.addHandler(handler)
 
 bot_configuration = BotConfiguration(
     name='HuntBot',
-    avatar='https://cdn1.iconfinder.com/data/icons/ninja-things-1/1772/ninja-simple-512.png',
+    avatar='/static/viberhuntbot/assets/ninja-simple-512.png'
     auth_token=os.environ['VIBER_HUNT_TOKEN']
 )
 
@@ -119,10 +118,6 @@ finalKeyboardResponse = {
         "ActionBody": "get a clue",
         "Text": "play again",
         "Silent": True,
-        "BgLoop": True,
-        "ActionType": "reply",
-        "ActionBody": "get first clue",
-        "Text": "get first clue,
         "TextVAlign": "middle",
         "TextHAlign": "center",
         "TextOpacity": 60,
@@ -142,7 +137,6 @@ finalKeyboardResponse = {
     }]
  }
 
-
 @app.route('/', methods=['POST'])
 def incoming():
     logger.debug("received request. post data: {0}".format(request.get_data()))
@@ -154,6 +148,7 @@ def incoming():
 
     if isinstance(viber_request, ViberMessageRequest):
         user_id = viber_request.sender.id
+        logger.debug("received interaction from user id: {}".format(user_id))       
 
         userStartedHunt = checkUserStatus(user_id)
 
@@ -244,6 +239,7 @@ def incoming():
                 ])
 
     elif isinstance(viber_request, ViberSubscribedRequest):
+        logger.debug("received subscribed request from user id: {}".format(viber_request.get_user.id))
         viber.send_messages(viber_request.get_user.id, [
             TextMessage(text = 'you are now subscribed to the treasure hunt!')
         ])
@@ -278,15 +274,6 @@ def checkLocation(clue):
     }
     return answers[clue]
 
-def checkAnswer(clue):
-    answers = {
-        1:'carfax',
-        2:'pembroke',
-        3:'christ church',
-        4:'dunno',
-        5:'beef lane'
-    }
-    return answers[clue]
 
 def sendClues(user_id, clueNumber, keyboard):
     clues =  {
@@ -306,4 +293,3 @@ def sendPhrases(user_id, keyboard):
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', port = 5005)
-
