@@ -26,7 +26,7 @@ logger.addHandler(handler)
 
 bot_configuration = BotConfiguration(
     name='HuntBot',
-    avatar='/static/viberhuntbot/assets/ninja-simple-512.png',
+    avatar='https://grammarbuffet.org/static/viberhuntbot/assets/ninja-simple-512.png',
     auth_token=os.environ['VIBER_HUNT_TOKEN']
 )
 
