@@ -149,7 +149,7 @@ def incoming():
     if isinstance(viber_request, ViberMessageRequest):
         user_id = viber_request.sender.id
         logger.debug("received interaction from user id: {}".format(user_id))       
-
+        logger.debug("received interaction from user name: {}".format(viber_request.sender.name))
         userStartedHunt = checkUserStatus(user_id)
 
         if userStartedHunt:
@@ -240,6 +240,7 @@ def incoming():
 
     elif isinstance(viber_request, ViberSubscribedRequest):
         logger.debug("received subscribed request from user id: {}".format(viber_request.get_user.id))
+        logger.debug("received subscribed request from user name: {}".format(viber_request.get_user.name)
         viber.send_messages(viber_request.get_user.id, [
             TextMessage(text = 'you are now subscribed to the treasure hunt!')
         ])
