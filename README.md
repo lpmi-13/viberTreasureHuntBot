@@ -5,3 +5,9 @@ a bot that guides students on a treasure hunt about Oxford.
 - students send their location through viber once they have found the place in the picture
 - if they found the right place, they get the next clue
 - provides students with simple phrases to use in their quest to find the places in the photos
+
+## Web application redesign
+
+See [the web application plan](docs/webapp-plan.md) for a proposed replacement that
+keeps the location-based, language-learning flow while adding hunt authoring,
+concurrent play, winner selection, and clue-image safety checks.
